@@ -10,18 +10,20 @@ public class EnemyMovement : MonoBehaviour
     Animator anim;
     bool finish;
     Transform enemy;
+    GameManager gm;
 
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!finish)
+        if (!finish && gm.gameRunning)
         {
             CheckForFinish();
         }
@@ -33,7 +35,7 @@ public class EnemyMovement : MonoBehaviour
         {
             EnemyGameOver();
         }
-        else
+        else if(gm.gameRunning)
         {
             Move();
         }
@@ -49,6 +51,7 @@ public class EnemyMovement : MonoBehaviour
     {
         if (transform.position == Vector3.zero)
         {
+            gm.gameRunning = false;
             anim.SetTrigger("Expand");
             rb.useGravity = false;
             GetComponent<BoxCollider>().isTrigger = true;
@@ -68,6 +71,7 @@ public class EnemyMovement : MonoBehaviour
             rb.velocity = new Vector3(0, 10, 0);
             if(transform.position.y > 30)
             {
+                GetComponentInChildren<ParticleSystem>().gameObject.transform.parent = null;
                 Destroy(gameObject);
             }
         }
