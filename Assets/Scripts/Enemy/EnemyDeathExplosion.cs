@@ -8,7 +8,7 @@ public class EnemyDeathExplosion : MonoBehaviour
 
     void LateUpdate()
     {
-        if (transform.parent == null)
+        if (transform.parent == null && !explode)
         {
             StartCoroutine(ExplosionEffect());
             explode = true;

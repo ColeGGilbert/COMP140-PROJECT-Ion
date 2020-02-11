@@ -22,7 +22,12 @@ public class EnemySpawning : MonoBehaviour
     {
         if (GameManager.gameRunning && GameManager.enemiesLeft > 0)
         {
-            Instantiate(enemyPref, spawnLocations[Random.Range(0, spawnLocations.Length)].position, Quaternion.identity);
+            Vector3 spawnPoint = new Vector3(Random.Range(0, 21), 0, Random.Range(0, 21));
+            while (Vector3.Distance(spawnPoint, transform.position) < 20 || Vector3.Distance(spawnPoint, transform.position) > 40)
+            {
+                spawnPoint = new Vector3(Random.Range(0, 21), 0, Random.Range(0, 21));
+            }
+            Instantiate(enemyPref, spawnPoint, Quaternion.identity);
             GameManager.enemiesLeft--;
         }
     }
