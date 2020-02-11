@@ -20,6 +20,10 @@ public class EnemySpawning : MonoBehaviour
 
     public void EnemySpawn()
     {
-        Instantiate(enemyPref, spawnLocations[Random.Range(0, spawnLocations.Length)].position, Quaternion.identity);
+        if (GameManager.gameRunning && GameManager.enemiesLeft > 0)
+        {
+            Instantiate(enemyPref, spawnLocations[Random.Range(0, spawnLocations.Length)].position, Quaternion.identity);
+            GameManager.enemiesLeft--;
+        }
     }
 }

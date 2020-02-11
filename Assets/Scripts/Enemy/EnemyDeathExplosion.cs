@@ -10,12 +10,19 @@ public class EnemyDeathExplosion : MonoBehaviour
     {
         if (transform.parent == null)
         {
-            GetComponent<ParticleSystem>().Play();
+            StartCoroutine(ExplosionEffect());
             explode = true;
         }
-        if (GetComponent<ParticleSystem>().isStopped && explode)
+        if (!GetComponent<ParticleSystem>().isPlaying && explode)
         {
             Destroy(gameObject);
         }
+    }
+
+    IEnumerator ExplosionEffect()
+    {
+        GetComponent<ParticleSystem>().Play();
+        yield return new WaitForSeconds(.2f);
+        GetComponent<ParticleSystem>().Stop();
     }
 }

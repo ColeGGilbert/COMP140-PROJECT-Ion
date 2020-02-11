@@ -5,9 +5,9 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
-    public bool gameRunning;
+    public static bool gameRunning { get; set; }
     int currentWave;
-    int enemiesLeft;
+    public static int enemiesLeft { get; set; }
     float spawnMod = 1;
 
     // Start is called before the first frame update
@@ -25,6 +25,11 @@ public class GameManager : MonoBehaviour
         {
             NewRound();
         }
+
+        if (!gameRunning)
+        {
+            GameEnd();
+        }
     }
 
     void NewRound()
@@ -32,5 +37,13 @@ public class GameManager : MonoBehaviour
         currentWave++;
         spawnMod += spawnMod * 0.1f; // Increase amount of enemies spawned each round
         enemiesLeft = Mathf.RoundToInt(currentWave * spawnMod);
+    }
+
+    void GameEnd()
+    {
+        foreach(Animator anim in FindObjectsOfType<Animator>())
+        {
+            anim.SetTrigger("End");
+        }
     }
 }
