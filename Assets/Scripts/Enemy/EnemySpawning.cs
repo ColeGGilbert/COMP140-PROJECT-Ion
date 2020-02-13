@@ -20,15 +20,15 @@ public class EnemySpawning : MonoBehaviour
 
     public void EnemySpawn()
     {
-        if (GameManager.gameRunning && GameManager.enemiesLeft > 0)
+        if (GameManager.gameRunning && GameManager.enemiesLeftToSpawn > 0)
         {
             Vector3 spawnPoint = new Vector3(Random.Range(0, 21), 0, Random.Range(0, 21));
             while (Vector3.Distance(spawnPoint, transform.position) < 20 || Vector3.Distance(spawnPoint, transform.position) > 40)
             {
-                spawnPoint = new Vector3(Random.Range(0, 21), 0, Random.Range(0, 21));
+                spawnPoint = new Vector3(Random.Range(-20, 21), 0, Random.Range(-20, 21));
             }
             Instantiate(enemyPref, spawnPoint, Quaternion.identity);
-            GameManager.enemiesLeft--;
+            GameManager.enemiesLeftToSpawn--;
         }
     }
 }

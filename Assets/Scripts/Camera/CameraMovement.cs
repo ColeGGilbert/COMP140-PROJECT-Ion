@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraMovement : MonoBehaviour
 {
     [SerializeField]
-    float rotationSpeed;
+    float rotationSpeed = 2.5f;
     float yRot;
     public Plane[] planes;
 

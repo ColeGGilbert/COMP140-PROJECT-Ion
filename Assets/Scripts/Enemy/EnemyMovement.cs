@@ -11,11 +11,14 @@ public class EnemyMovement : MonoBehaviour
     bool finish;
     Transform enemy;
 
+    public bool canMove;
+
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
+        canMove = true;
     }
 
     // Update is called once per frame
@@ -37,7 +40,7 @@ public class EnemyMovement : MonoBehaviour
         {
             EnemyGameOver();
         }
-        else if(GameManager.gameRunning)
+        else if(GameManager.gameRunning && canMove)
         {
             Move();
         }

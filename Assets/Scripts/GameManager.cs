@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static bool gameRunning { get; set; }
     int currentWave;
-    public static int enemiesLeft { get; set; }
+    public static int enemiesLeftToSpawn { get; set; }
     float spawnMod = 1;
     bool newRoundInit;
     Color newCol;
@@ -18,7 +19,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         currentWave = 1;
-        enemiesLeft = 1;
+        enemiesLeftToSpawn = 1;
         gameRunning = true;
         newRoundInit = true;
     }
@@ -26,7 +27,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enemiesLeft <= 0 && FindObjectsOfType<EnemyMovement>().Length <= 0 && newRoundInit) // Checks if there are no more enemies spawning and there are no enemies in the scene
+        if (enemiesLeftToSpawn <= 0 && FindObjectsOfType<EnemyMovement>().Length <= 0 && newRoundInit) // Checks if there are no more enemies spawning and there are no enemies in the scene
         {
             StartCoroutine(DelayNewRound());
         }
@@ -46,9 +47,17 @@ public class GameManager : MonoBehaviour
 
     void NewRound()
     {
+        foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            Destroy(enemy);
+        }
+        foreach(GameObject image in GameObject.FindGameObjectsWithTag("Image"))
+        {
+            Destroy(image);
+        }
         currentWave++;
         spawnMod += spawnMod * 0.1f; // Increase amount of enemies spawned each round
-        enemiesLeft = Mathf.RoundToInt(currentWave * spawnMod);
+        enemiesLeftToSpawn = Mathf.RoundToInt(currentWave * spawnMod);
         newCol = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
         newRoundInit = true;    
     }
@@ -70,7 +79,7 @@ public class GameManager : MonoBehaviour
                 Destroy(em.gameObject);
             }
             currentWave = 1;
-            enemiesLeft = 1;
+            enemiesLeftToSpawn = 1;
             gameRunning = true;
             newRoundInit = true;
         }
