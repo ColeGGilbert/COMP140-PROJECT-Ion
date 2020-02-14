@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     float spawnMod = 1;
     bool newRoundInit;
     Color newCol;
+    float distance;
 
     [SerializeField]
     Renderer floor;
@@ -43,6 +44,20 @@ public class GameManager : MonoBehaviour
         }
 
         Reset();
+    }
+
+    void AffectGrain()
+    {
+        foreach (EnemyMovement em in FindObjectsOfType<EnemyMovement>())
+        {
+            distance = 20f;
+            if (Vector3.Distance(transform.position, em.transform.position) < distance)
+            {
+                distance = Vector3.Distance(transform.position, em.transform.position);
+            }
+            em.GetComponentInChildren<Animator>().enabled = false;
+            Destroy(em);
+        }
     }
 
     void NewRound()

@@ -13,6 +13,11 @@ public class TakePicture : MonoBehaviour
     [SerializeField]
     float distance = 20f;
 
+    int pictureCharges = 3;
+    int maxPictureCharges = 3;
+    float pictureRechargeResetTimer = 2.25f;
+    float pictureRechargeTimer;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,12 +26,13 @@ public class TakePicture : MonoBehaviour
         snapCam.enabled = false;
         canvas = GameObject.Find("WorldCanvas").transform;
         snapCam.targetTexture = new RenderTexture(snapCam.pixelWidth, snapCam.pixelHeight, 24);
+        pictureRechargeTimer = pictureRechargeResetTimer;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && pictureCharges > 0)
         {
             distance = 20f;
             foreach (EnemyMovement em in FindObjectsOfType<EnemyMovement>())
@@ -41,17 +47,49 @@ public class TakePicture : MonoBehaviour
                     Destroy(em);
                 }
             }
-            snapCam.enabled = true;
-            GameObject image = Instantiate(newImagePref, transform.position + transform.forward * distance, transform.rotation);
-            snapCam.Render();
-            RenderTexture.active = snapCam.targetTexture;
-            snapCam.targetTexture = new RenderTexture(snapCam.pixelWidth, snapCam.pixelHeight, 24);
-            image.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, snapCam.pixelWidth / (40 + (distance*2.5f)));
-            image.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, snapCam.pixelHeight / (40 + (distance*2.5f)));
-            //image.GetComponent<FreezeImageInWorld>().ApplyImage(snapshot.EncodeToPNG());
-            image.GetComponent<FreezeImageInWorld>().ApplyImage(RenderTexture.active);
-            image.transform.SetParent(canvas);
-            snapCam.enabled = false;
+            if(distance <= 0)
+            {
+                distance += 0.1f;
+            }
+
+            pictureCharges--;
+
+            CaptureImage();
+        }
+
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Debug.Log("Charges: " + pictureCharges);
+        }
+
+        ChargeCamera();
+    }
+
+    void CaptureImage()
+    {
+        snapCam.enabled = true;
+        GameObject image = Instantiate(newImagePref, transform.position + transform.forward * distance, transform.rotation);
+        snapCam.Render();
+        RenderTexture.active = snapCam.targetTexture;
+        snapCam.targetTexture = new RenderTexture(snapCam.pixelWidth, snapCam.pixelHeight, 24);
+        image.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, snapCam.pixelWidth / (40 + (distance * 2.5f)));
+        image.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, snapCam.pixelHeight / (40 + (distance * 2.5f)));
+        //image.GetComponent<FreezeImageInWorld>().ApplyImage(snapshot.EncodeToPNG());
+        image.GetComponent<FreezeImageInWorld>().ApplyImage(RenderTexture.active);
+        image.transform.SetParent(canvas);
+        snapCam.enabled = false;
+    }
+
+    void ChargeCamera()
+    {
+        if (pictureCharges < maxPictureCharges)
+        {
+            pictureRechargeTimer -= Time.deltaTime;
+            if(pictureRechargeTimer <= 0)
+            {
+                pictureCharges++;
+                pictureRechargeTimer = pictureRechargeResetTimer;
+            }
         }
     }
 }
