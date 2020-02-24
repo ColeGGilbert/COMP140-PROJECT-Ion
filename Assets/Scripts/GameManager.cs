@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO.Ports;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,7 +12,13 @@ public class GameManager : MonoBehaviour
     float spawnMod = 1;
     bool newRoundInit;
     Color newCol;
+    public bool controllerActive;
+    public int commPort;
+    private SerialPort serial = null;
+    private bool connected = false;
     float distance;
+    [SerializeField]
+    TakePicture tp;
 
     [SerializeField]
     Renderer floor;
@@ -19,10 +26,20 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ConnectToSerial();
         currentWave = 1;
         enemiesLeftToSpawn = 1;
         gameRunning = true;
         newRoundInit = true;
+    }
+
+    void ConnectToSerial()
+    {
+        Debug.Log("Attempting Serial: " + commPort);
+
+        serial = new SerialPort("\\\\.\\COM" + commPort, 9600);
+        serial.ReadTimeout = 50;
+        serial.Open();
     }
 
     // Update is called once per frame
@@ -43,10 +60,12 @@ public class GameManager : MonoBehaviour
             floor.material.color = Color.Lerp(floor.material.color, newCol, .1f);
         }
 
+        ArduinoInput();
+
         Reset();
     }
 
-    void AffectGrain()
+    /*void AffectGrain()
     {
         foreach (EnemyMovement em in FindObjectsOfType<EnemyMovement>())
         {
@@ -57,6 +76,39 @@ public class GameManager : MonoBehaviour
             }
             em.GetComponentInChildren<Animator>().enabled = false;
             Destroy(em);
+        }
+    }*/
+
+    void ArduinoInput()
+    {
+        if (controllerActive)
+        {
+            WriteToArduino("i");
+            string value = ReadFromArduino(50);
+
+            if(value == "1")
+            {
+                tp.InitPicture();
+            }
+        }
+    }
+
+    void WriteToArduino(string message)
+    {
+        serial.WriteLine(message);
+        serial.BaseStream.Flush();
+    }
+
+    public string ReadFromArduino(int timeout = 0)
+    {
+        serial.ReadTimeout = timeout;
+        try
+        {
+            return serial.ReadLine();
+        }
+        catch(System.TimeoutException e)
+        {
+            return null;
         }
     }
 

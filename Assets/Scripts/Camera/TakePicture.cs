@@ -32,37 +32,44 @@ public class TakePicture : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire1") && pictureCharges > 0)
-        {
-            distance = 20f;
-            foreach (EnemyMovement em in FindObjectsOfType<EnemyMovement>())
-            {
-                if (GeometryUtility.TestPlanesAABB(camMove.planes, em.GetComponent<Collider>().bounds))
-                {
-                    if(Vector3.Distance(transform.position, em.transform.position) < distance)
-                    {
-                        distance = Vector3.Distance(transform.position, em.transform.position) - 3.5f;
-                    }
-                    em.GetComponentInChildren<Animator>().enabled = false;
-                    Destroy(em);
-                }
-            }
-            if(distance <= 0)
-            {
-                distance += 0.1f;
-            }
-
-            pictureCharges--;
-
-            CaptureImage();
-        }
-
         if (Input.GetButtonDown("Fire1"))
         {
-            Debug.Log("Charges: " + pictureCharges);
+            InitPicture();
         }
 
         ChargeCamera();
+    }
+
+    public void InitPicture()
+    {
+        if (GameManager.gameRunning)
+        {
+            Debug.Log("Charges: " + pictureCharges);
+            if (pictureCharges > 0)
+            {
+                distance = 20f;
+                foreach (EnemyMovement em in FindObjectsOfType<EnemyMovement>())
+                {
+                    if (GeometryUtility.TestPlanesAABB(camMove.planes, em.GetComponent<Collider>().bounds))
+                    {
+                        if (Vector3.Distance(transform.position, em.transform.position) < distance)
+                        {
+                            distance = Vector3.Distance(transform.position, em.transform.position) - 3.5f;
+                        }
+                        em.GetComponentInChildren<Animator>().enabled = false;
+                        Destroy(em);
+                    }
+                }
+                if (distance <= 0)
+                {
+                    distance += 0.1f;
+                }
+
+                pictureCharges--;
+
+                CaptureImage();
+            }
+        }
     }
 
     void CaptureImage()
