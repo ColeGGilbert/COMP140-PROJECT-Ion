@@ -14,4 +14,4 @@ Web: http://www.jarzebski.pl
 (c) 2014 by Korneliusz Jarzebski
 
 ## License
-As I am under no contractual oblication to keep the repository and work privated, I am allowing for anyone to use my work in their own projects with the correct reference to authorship, therefore I have chosen the MIT license. This way, my work with using the gyroscope output communication with unity from the arduino can be used by anyone that needs a similar solution.
+As I am under no contractual obligation to keep the repository and work privated, I am allowing for anyone to use my work in their own projects with the correct reference to authorship, therefore I have chosen the MIT license. This way, my work with using the gyroscope output communication with unity from the arduino can be used by anyone that needs a similar solution.
