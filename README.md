@@ -1,4 +1,4 @@
-# COMP140-CameraGame
+# PROJECT-Ion
 Projection is set in a reality where yourself and a team of scientists have been researching ways to manipulate time to freeze objects in place. 
 
 ## References/Sources
