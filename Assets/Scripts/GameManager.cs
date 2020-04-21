@@ -19,6 +19,9 @@ public class GameManager : MonoBehaviour
     float distance;
     [SerializeField]
     TakePicture tp;
+    float cameraX;
+    float cameraY;
+    float cameraZ;
 
     [SerializeField]
     Renderer floor;
@@ -37,7 +40,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Attempting Serial: " + commPort);
 
-        serial = new SerialPort("\\\\.\\COM" + commPort, 9600);
+        serial = new SerialPort("\\\\.\\COM" + commPort, 115200);
         serial.ReadTimeout = 50;
         serial.Open();
     }
@@ -84,11 +87,29 @@ public class GameManager : MonoBehaviour
         if (controllerActive)
         {
             WriteToArduino("i");
-            string value = ReadFromArduino(50);
-
-            if(value == "1")
+            string[] values = ReadFromArduino(50).Split(',');
+            foreach(string s in values)
             {
-                tp.InitPicture();
+                Debug.Log(s);
+            }
+
+            if (values.Length > 0)
+            {
+                if (values[0] == "1")
+                {
+                    tp.InitPicture();
+                }
+
+                //Debug.Log(values[1]);
+                //Debug.Log(values[2]);
+                //Debug.Log(values[3]);
+                
+                cameraX = float.Parse(values[1]);
+                cameraY = float.Parse(values[2]);
+                cameraZ = float.Parse(values[3]);
+
+                Camera.main.transform.eulerAngles = new Vector3(cameraX, -cameraY, -cameraZ);
+                Debug.Log(Camera.main.transform.eulerAngles);
             }
         }
     }
