@@ -1,3 +1,5 @@
+//MPU-6050 Library by Korneliusz Jarzebski 2014 (c)
+
 int Button = 4;
 bool first;
 
