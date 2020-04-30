@@ -29,7 +29,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        ConnectToSerial();
+        if (controllerActive)
+        {
+            ConnectToSerial();
+        }
         currentWave = 1;
         enemiesLeftToSpawn = 1;
         gameRunning = true;
