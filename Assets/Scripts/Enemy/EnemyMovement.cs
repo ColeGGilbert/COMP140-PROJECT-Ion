@@ -24,9 +24,16 @@ public class EnemyMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.gameRunning)
+        if (GameManager.gameRunning && !GameManager.paused)
         {
+            canMove = true;
+            anim.enabled = true;
             CheckForFinish();
+        }
+        else if (GameManager.paused)
+        {
+            canMove = false;
+            anim.enabled = false;
         }
         else
         {
@@ -40,7 +47,7 @@ public class EnemyMovement : MonoBehaviour
         {
             EnemyGameOver();
         }
-        else if(GameManager.gameRunning && canMove)
+        else if(GameManager.gameRunning && canMove && !GameManager.paused)
         {
             Move();
         }

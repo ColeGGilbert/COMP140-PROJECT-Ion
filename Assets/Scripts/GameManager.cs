@@ -7,18 +7,23 @@ using System.IO.Ports;
 public class GameManager : MonoBehaviour
 {
     public static bool gameRunning { get; set; }
+    public static bool paused { get; set; }
     int currentWave;
     public static int enemiesLeftToSpawn { get; set; }
     float spawnMod = 1;
+    // newRoundInit restricts the script from initiating a new round more than once
     bool newRoundInit;
     Color newCol;
     public bool controllerActive;
+    public bool[] controllerAxis = new bool[3] { true, true, true}; 
     public int commPort;
     private SerialPort serial = null;
     private bool connected = false;
     float distance;
     [SerializeField]
     TakePicture tp;
+
+    // Holds values for camera rotation input from arduino
     float cameraX;
     float cameraY;
     float cameraZ;
@@ -51,7 +56,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enemiesLeftToSpawn <= 0 && FindObjectsOfType<EnemyMovement>().Length <= 0 && newRoundInit) // Checks if there are no more enemies spawning and there are no enemies in the scene
+        if (enemiesLeftToSpawn <= 0 && FindObjectsOfType<EnemyMovement>().Length <= 0 && newRoundInit && gameRunning) // Checks if there are no more enemies spawning and there are no enemies in the scene
         {
             StartCoroutine(DelayNewRound());
         }
