@@ -6,20 +6,29 @@ using System.IO.Ports;
 
 public class GameManager : MonoBehaviour
 {
+    // gameRunning determines if game is lost, paused determines if the player is on the menu screen
     public static bool gameRunning { get; set; }
     public static bool paused { get; set; }
+
     int currentWave;
     public static int enemiesLeftToSpawn { get; set; }
+
+    // spawnMod affects number of enemies spawned per wave
     float spawnMod = 1;
+
     // newRoundInit restricts the script from initiating a new round more than once
     bool newRoundInit;
+
     Color newCol;
+
+    // controllerActive enables the game to attempt to use the camera controller
     public bool controllerActive;
-    public bool[] controllerAxis = new bool[3] { true, true, true}; 
+    // commPort determines which port the controller is plugged into
     public int commPort;
+
     private SerialPort serial = null;
     private bool connected = false;
-    float distance;
+
     [SerializeField]
     TakePicture tp;
 
@@ -34,10 +43,12 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // If controller is enabled, attempt to connect using commPort
         if (controllerActive)
         {
             ConnectToSerial();
         }
+        // Assign first wave variables
         currentWave = 1;
         enemiesLeftToSpawn = 1;
         gameRunning = true;
@@ -48,6 +59,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Attempting Serial: " + commPort);
 
+        // Connects to arduino serial for data transfer
         serial = new SerialPort("\\\\.\\COM" + commPort, 115200);
         serial.ReadTimeout = 50;
         serial.Open();
@@ -56,16 +68,19 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enemiesLeftToSpawn <= 0 && FindObjectsOfType<EnemyMovement>().Length <= 0 && newRoundInit && gameRunning) // Checks if there are no more enemies spawning and there are no enemies in the scene
+        // Checks if there are no more enemies spawning and there are no enemies in the scene
+        if (enemiesLeftToSpawn <= 0 && FindObjectsOfType<EnemyMovement>().Length <= 0 && newRoundInit && gameRunning) 
         {
             StartCoroutine(DelayNewRound());
         }
 
         if (!gameRunning)
         {
-            GameEnd(); // Stops all enemies from moving, and triggers game over sequence
+            // Stops all enemies from moving, and triggers game over sequence
+            GameEnd(); 
         }
 
+        // Changes the floor colour to indicate the change in wave
         if(floor.material.color != newCol)
         {
             floor.material.color = Color.Lerp(floor.material.color, newCol, .1f);
@@ -76,30 +91,14 @@ public class GameManager : MonoBehaviour
         Reset();
     }
 
-    /*void AffectGrain()
-    {
-        foreach (EnemyMovement em in FindObjectsOfType<EnemyMovement>())
-        {
-            distance = 20f;
-            if (Vector3.Distance(transform.position, em.transform.position) < distance)
-            {
-                distance = Vector3.Distance(transform.position, em.transform.position);
-            }
-            em.GetComponentInChildren<Animator>().enabled = false;
-            Destroy(em);
-        }
-    }*/
-
     void ArduinoInput()
     {
         if (controllerActive)
         {
+            // Request the arduino to write to serial
             WriteToArduino("i");
+            // Read from the arduino serial (timeout 50ms)
             string[] values = ReadFromArduino(50).Split(',');
-            foreach(string s in values)
-            {
-                Debug.Log(s);
-            }
 
             if (values.Length > 0)
             {
@@ -108,6 +107,7 @@ public class GameManager : MonoBehaviour
                     tp.InitPicture();
                 }
 
+                // Debug for incoming values from arduino
                 //Debug.Log(values[1]);
                 //Debug.Log(values[2]);
                 //Debug.Log(values[3]);
@@ -117,7 +117,6 @@ public class GameManager : MonoBehaviour
                 cameraZ = float.Parse(values[3]);
 
                 Camera.main.transform.eulerAngles = new Vector3(cameraX, -cameraY, -cameraZ);
-                Debug.Log(Camera.main.transform.eulerAngles);
             }
         }
     }
@@ -141,6 +140,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // At the start of a new round, remove existing enemies and images
     void NewRound()
     {
         foreach(GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
@@ -151,6 +151,8 @@ public class GameManager : MonoBehaviour
         {
             Destroy(image);
         }
+
+        // Assign new wave variables
         currentWave++;
         spawnMod += spawnMod * 0.1f; // Increase amount of enemies spawned each round
         enemiesLeftToSpawn = Mathf.RoundToInt(currentWave * spawnMod);
@@ -168,6 +170,7 @@ public class GameManager : MonoBehaviour
 
     void Reset()
     {
+        // Pressing G resets the game, to level 1, in case the player gets stuck
         if (Input.GetKeyDown(KeyCode.G))
         {
             foreach(EnemyMovement em in FindObjectsOfType<EnemyMovement>())

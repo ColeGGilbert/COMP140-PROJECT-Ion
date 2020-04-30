@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyMovement : MonoBehaviour
 {
     [SerializeField]
-    float speed = 1f;
+    float speed = .05f;
     Rigidbody rb;
     Animator anim;
     bool finish;
@@ -26,12 +26,14 @@ public class EnemyMovement : MonoBehaviour
     {
         if (GameManager.gameRunning && !GameManager.paused)
         {
+            // Enables movement and animation
             canMove = true;
             anim.enabled = true;
             CheckForFinish();
         }
         else if (GameManager.paused)
         {
+            // Disables movement and animation
             canMove = false;
             anim.enabled = false;
         }
@@ -55,12 +57,14 @@ public class EnemyMovement : MonoBehaviour
 
     void Move()
     {
+        // Moves enemy towards the centre of the level
         transform.position = Vector3.MoveTowards(transform.position, Vector3.zero, speed);
         transform.LookAt(Vector3.zero);
     }
 
     void CheckForFinish()
     {
+        // If the enemy reaches the centre, end game and start end animation
         if (transform.position == Vector3.zero)
         {
             GameManager.gameRunning = false;
@@ -72,6 +76,7 @@ public class EnemyMovement : MonoBehaviour
 
     void CheckGameEnd()
     {
+        // Once the enemy finishes it's animation, the game ends
         if (anim.gameObject.transform.localScale.y == 10)
         {
             finish = true;
@@ -82,10 +87,12 @@ public class EnemyMovement : MonoBehaviour
     {
         if (finish)
         {
+            // Enemy starts moving upwards
             rb.constraints = RigidbodyConstraints.FreezePositionX;
             rb.velocity = new Vector3(0, 10, 0);
             if(transform.position.y > 30)
             {
+                // Seperates the particle system from the enemy to avoid being destroyed along with the enemy
                 GetComponentInChildren<ParticleSystem>().gameObject.transform.parent = null;
                 Destroy(gameObject);
             }

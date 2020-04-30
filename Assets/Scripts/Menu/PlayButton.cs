@@ -16,6 +16,7 @@ public class PlayButton : MonoBehaviour
 
     private void Update()
     {
+        // Escape is used to trigger the pause menu whilst playing
         if (Input.GetKeyDown(KeyCode.Escape) && !GameManager.paused)
         {
             GetComponent<Animator>().SetTrigger("Switch");
@@ -25,6 +26,12 @@ public class PlayButton : MonoBehaviour
         CheckRotation();
     }
 
+
+    /// <summary>
+    /// CheckRotation() contains the logic for how the menu camera rotates when switching out between paused and playing
+    /// rotateCam is true when the game is playing and false when the game is paused
+    /// Game is unpaused/paused as the camera finishes moving towards its destination
+    /// </summary>
     void CheckRotation()
     {
         if (menuCam.transform.rotation.x > 0 && rotateCam)

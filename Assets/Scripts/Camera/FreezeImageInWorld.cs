@@ -16,11 +16,13 @@ public class FreezeImageInWorld : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Fades the camera out over time
         thisImage.color -= new Color(0, 0, 0, .01f);
     }
 
     public void ApplyImage(Texture image)
     {
+        // Assigns the snapshot image to the ui image
         GetComponent<RawImage>().texture = image;
     }
 }
