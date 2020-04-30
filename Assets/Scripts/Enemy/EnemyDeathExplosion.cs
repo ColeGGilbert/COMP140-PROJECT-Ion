@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class EnemyDeathExplosion : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class EnemyDeathExplosion : MonoBehaviour
         }
         if (!GetComponent<ParticleSystem>().isPlaying && explode)
         {
-            Destroy(gameObject);
+            SceneManager.LoadScene(0);
         }
     }
 
